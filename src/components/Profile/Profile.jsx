@@ -3,7 +3,11 @@ import './Profile.css';
 
 const Profile = () => {
   return (
-    <section id="profile" className="profile">
+    <section 
+      className="profile" 
+      id="profile"
+      data-testid="profile-section"
+    >
       <div className="profile-content">
         <div className="profile-header">
           <h1>Software Engineer</h1>
