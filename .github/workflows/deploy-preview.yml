@@ -15,12 +15,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy-preview:
+  deploy-preview:
     runs-on: ubuntu-latest
     environment:
       name: preview-${{ github.event.pull_request.number }}
       url: ${{ steps.deployment.outputs.page_url }}
-
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,21 +45,21 @@ jobs:
           VITE_APP_BASE_URL: ${{ secrets.STAGING_BASE_URL }}
           VITE_APP_API_URL: ${{ secrets.STAGING_API_URL }}
           VITE_APP_GOOGLE_ANALYTICS_ID: ${{ secrets.STAGING_GA_ID }}
-          VITE_BASE_PATH: '/myself-react-app/pr-${{ github.event.pull_request.number }}'
+          VITE_BASE_PATH: '/preview-${{ github.event.pull_request.number }}'
           VITE_APP_ENABLE_DEBUG: 'true'
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@main
         with:
-          path: './dist'
-          name: pr-${{ github.event.pull_request.number }}
+          name: github-pages
+          path: dist
 
-      - name: Deploy Preview
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          artifact_name: pr-${{ github.event.pull_request.number }}
+          artifact_name: github-pages
           preview: true
