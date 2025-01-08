@@ -205,42 +205,107 @@ The project is configured for automated deployment to GitHub Pages:
 - **Production Deployment**: Automatically triggered when changes are merged to the main branch
 - **Preview Deployment**: Automatically created for pull requests
 
-### Setting up GitHub Pages Deployment
+## GitHub Workflow Configuration
 
-1. Go to your repository settings
-2. Navigate to "Pages" section
-3. Select "GitHub Actions" as the source
-4. Ensure the repository has necessary permissions:
-   - Go to Settings > Actions > General
-   - Under "Workflow permissions", select "Read and write permissions"
+### 1. Enable GitHub Pages
+1. Go to repository Settings > Pages
+2. Under "Build and deployment":
+   - Source: Select "GitHub Actions"
+   - This enables GitHub Pages deployment through workflows
 
-5. Set up environment secrets:
-   
-   Production Environment:
-   ```
-   PROD_BASE_URL=https://yourdomain.com
-   PROD_API_URL=https://api.yourdomain.com/api
-   PROD_GA_ID=UA-PRODUCTION-ID
-   ```
+### 2. Configure Repository Permissions
+1. Go to Settings > Actions > General
+2. Under "Workflow permissions":
+   - Select "Read and write permissions"
+   - Check "Allow GitHub Actions to create and approve pull requests"
+3. Under "Required approvals":
+   - Set the number of approvals required for production deployments
 
-   Staging Environment:
-   ```
-   STAGING_BASE_URL=https://staging.yourdomain.com
-   STAGING_API_URL=https://api-staging.yourdomain.com/api
-   STAGING_GA_ID=UA-STAGING-ID
-   ```
+### 3. Set Up Environment Secrets
+1. Go to Settings > Secrets and variables > Actions
+2. Click "New repository secret"
+3. Add the following secrets:
 
-   To add these secrets:
-   - Go to Settings > Secrets and variables > Actions
-   - Click "New repository secret"
-   - Add each secret with its corresponding value
-   - Ensure the secret names match exactly as shown above
+Production Environment:
+```
+PROD_BASE_URL=https://yourdomain.com
+PROD_API_URL=https://api.yourdomain.com/api
+PROD_GA_ID=UA-PRODUCTION-ID
+```
 
-6. Configure environments (optional but recommended):
-   - Go to Settings > Environments
-   - Create "Production" and "Staging" environments
-   - Add environment-specific protection rules and secrets
-   - Configure required reviewers for production deployments
+Staging Environment:
+```
+STAGING_BASE_URL=https://staging.yourdomain.com
+STAGING_API_URL=https://api-staging.yourdomain.com/api
+STAGING_GA_ID=UA-STAGING-ID
+```
+
+### 4. Configure Environments
+1. Go to Settings > Environments
+2. Create two environments:
+   - "github-pages" (required for production)
+   - "preview-{PR_NUMBER}" (for pull request previews)
+
+3. For "github-pages" environment:
+   - Click "Configure environment"
+   - Add deployment branch rules:
+     * Select "Protected branches"
+     * Add "main" as protected branch
+   - Add required reviewers if needed
+   - Add environment-specific secrets
+
+4. For "preview-{PR_NUMBER}" environment:
+   - Configure deployment rules:
+     * Allow all branches (for PR previews)
+   - No approval required (for faster preview deployments)
+
+### 5. Branch Protection Rules
+1. Go to Settings > Branches
+2. Click "Add branch protection rule"
+3. For the "main" branch:
+   - Require pull request reviews
+   - Require status checks to pass
+   - Require conversation resolution
+   - Include administrators in restrictions
+
+### 6. Verify Workflow Files
+Ensure these files exist in your repository:
+```
+.github/workflows/
+├── deploy-production.yml  # For main branch deployments
+└── deploy-preview.yml    # For PR preview deployments
+```
+
+### 7. Additional Settings (Optional)
+1. Configure Issue Templates:
+   - Go to Settings > General > Features
+   - Enable "Issues"
+   - Set up issue templates
+
+2. Pull Request Template:
+   - Create `.github/pull_request_template.md`
+   - Define standard PR format
+
+3. Configure Dependency Updates:
+   - Enable Dependabot alerts
+   - Set up automatic security updates
+
+### Troubleshooting Common Issues
+
+1. Deployment Failures:
+   - Verify workflow permissions
+   - Check if secrets are properly set
+   - Ensure environment names match exactly
+
+2. Preview Deployments Not Working:
+   - Check if PR comes from a fork
+   - Verify preview environment exists
+   - Check workflow logs for errors
+
+3. Production Deployment Issues:
+   - Verify branch protection rules
+   - Check if required reviews are completed
+   - Ensure github-pages environment is configured
 
 ## Development
 
