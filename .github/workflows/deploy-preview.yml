@@ -49,16 +49,33 @@ jobs:
           VITE_BASE_PATH: '/myself-react-app/pr-${{ github.event.pull_request.number }}'
           VITE_APP_ENABLE_DEBUG: 'true'
 
+      # Debug step to check dist directory
+      - name: Debug - List dist directory
+        run: |
+          echo "Contents of dist directory:"
+          ls -la dist/
+          echo "Total size of dist:"
+          du -sh dist/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # Try with a different artifact name
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+          name: _site # Using _site as the artifact name
+
+      # Debug step to verify artifact
+      - name: Debug - List artifacts
+        run: |
+          echo "Available artifacts:"
+          ls -la ${{ github.workspace }}
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
         with:
           preview: true
+          artifact_name: _site # Match the artifact name from upload step
