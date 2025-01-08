@@ -51,11 +51,9 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
-          name: pr-${{ github.event.pull_request.number }}
 
       - name: Deploy Preview
         id: deployment
         uses: actions/deploy-pages@v3
         with:
-          artifact_name: pr-${{ github.event.pull_request.number }}
           preview: true
