@@ -13,11 +13,7 @@ export default defineConfig(({ command, mode }) => {
       environment: 'jsdom',
       setupFiles: './src/test/setup.js',
     },
-    base: mode === 'production' 
-      ? '/myself-react-app/'
-      : mode === 'staging'
-        ? '/myself-react-app-staging/'
-        : '/',
+    base: process.env.VITE_BASE_PATH || '/',
     server: {
       port: 5173,
       strictPort: true,
