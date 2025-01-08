@@ -16,8 +16,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy-preview:
     runs-on: ubuntu-latest
+    environment:
+      name: preview-${{ github.event.pull_request.number }}
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,19 +52,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: preview-${{ github.event.pull_request.number }}
-      url: ${{ steps.deployment.outputs.page_url }}
-    
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
