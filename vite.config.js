@@ -1,0 +1,50 @@
+import { defineConfig, loadEnv } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig(({ command, mode }) => {
+  // Load env file based on `mode` in the current working directory.
+  const env = loadEnv(mode, process.cwd(), '')
+  
+  return {
+    plugins: [react()],
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.js',
+    },
+    base: mode === 'production' 
+      ? '/myself-react-app/'
+      : mode === 'staging'
+        ? '/myself-react-app-staging/'
+        : '/',
+    server: {
+      port: 5173,
+      strictPort: true,
+      open: true,
+    },
+    preview: {
+      port: 4173,
+      strictPort: true,
+      open: true,
+    },
+    build: {
+      outDir: 'dist',
+      sourcemap: mode !== 'production',
+      // Generate manifest file for PWA
+      manifest: true,
+      // Customize rollup build options
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+          },
+        },
+      },
+    },
+    define: {
+      // Pass environment variables to the client
+      __APP_ENV__: JSON.stringify(env.VITE_APP_ENV),
+    },
+  }
+})
