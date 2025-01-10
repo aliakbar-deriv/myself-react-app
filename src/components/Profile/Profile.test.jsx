@@ -23,7 +23,7 @@ describe('Profile Component', () => {
 
   it('has correct section id', () => {
     render(<Profile />);
-    const section = screen.getByRole('region');
+    const section = screen.getByTestId('profile-section');
     expect(section).toHaveAttribute('id', 'profile');
   });
 });

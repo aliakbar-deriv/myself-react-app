@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ command, mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '')
-  
+
   return {
     plugins: [react()],
     test: {
@@ -13,11 +13,7 @@ export default defineConfig(({ command, mode }) => {
       environment: 'jsdom',
       setupFiles: './src/test/setup.js',
     },
-    base: mode === 'production' 
-      ? '/myself-react-app/'
-      : mode === 'staging'
-        ? '/myself-react-app-staging/'
-        : '/',
+    base: env.VITE_BASE_PATH || '/',
     server: {
       port: 5173,
       strictPort: true,
@@ -30,14 +26,24 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       outDir: 'dist',
+      assetsDir: 'assets',
       sourcemap: mode !== 'production',
       // Generate manifest file for PWA
       manifest: true,
       // Customize rollup build options
       rollupOptions: {
         output: {
+          // Ensure chunk filenames include content hash
+          assetFileNames: 'assets/[name]-[hash][extname]',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+          // Implement manual chunks for better code splitting
           manualChunks: {
-            vendor: ['react', 'react-dom'],
+            vendor: [
+              'react',
+              'react-dom',
+              'react-router-dom'
+            ],
           },
         },
       },
