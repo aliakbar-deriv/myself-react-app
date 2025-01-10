@@ -46,7 +46,7 @@ jobs:
           VITE_APP_BASE_URL: ${{ secrets.STAGING_BASE_URL }}
           VITE_APP_API_URL: ${{ secrets.STAGING_API_URL }}
           VITE_APP_GOOGLE_ANALYTICS_ID: ${{ secrets.STAGING_GA_ID }}
-          VITE_BASE_PATH: ''
+          VITE_BASE_PATH: '/'
           VITE_APP_ENABLE_DEBUG: 'true'
 
       - name: Setup Pages
