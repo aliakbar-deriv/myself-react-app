@@ -13,7 +13,7 @@ export default defineConfig(({ command, mode }) => {
       environment: 'jsdom',
       setupFiles: './src/test/setup.js',
     },
-    base: process.env.VITE_BASE_PATH || '/',
+    base: env.VITE_BASE_PATH || '/',
     server: {
       port: 5173,
       strictPort: true,
