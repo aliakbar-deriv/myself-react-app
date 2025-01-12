@@ -6,6 +6,11 @@ on:
       - opened
       - synchronize
 
+# Default permissions
+permissions:
+  contents: read
+  packages: read
+
 # Cancel in-progress runs for pull requests
 concurrency:
   group: preview-${{ github.ref }}
@@ -21,6 +26,9 @@ jobs:
   quality:
     name: Quality Checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,6 +46,7 @@ jobs:
     permissions:
       deployments: write
       issues: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

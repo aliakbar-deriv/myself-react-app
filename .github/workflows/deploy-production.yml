@@ -4,6 +4,11 @@ on:
     tags:
       - 'v*'
 
+# Default permissions
+permissions:
+  contents: read
+  packages: read
+
 # Ensure only one production deployment can run at a time
 concurrency:
   group: production
@@ -21,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       deployments: write
+      statuses: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
