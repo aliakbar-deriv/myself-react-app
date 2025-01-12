@@ -1,22 +1,23 @@
-name: Deploy Preview
+name: Deploy Staging
 on:
-  pull_request:
-    branches: [ main, dev ]
+  pull_request_target:
     types:
-      - opened
-      - synchronize
+      - closed
+    branches:
+      - main
 
-# Cancel in-progress runs for pull requests
+# Ensure only one staging deployment can run at a time
 concurrency:
-  group: preview-${{ github.ref }}
-  cancel-in-progress: true
+  group: staging
+  cancel-in-progress: false
 
 jobs:
   quality:
     name: Quality Checks
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     env:
-      NODE_ENV: development
+      NODE_ENV: staging
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,25 +28,28 @@ jobs:
       - name: Run quality assurance checks
         uses: ./.github/actions/quality-checks
 
-  preview:
-    name: Deploy Preview
+  staging:
+    name: Deploy Staging
     needs: quality
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     env:
-      NODE_ENV: development
+      NODE_ENV: staging
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    permissions:
+      deployments: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-         
+        
       - name: Deploy to Vercel
-        uses: ./.github/actions/deploy/vercel/development
+        uses: ./.github/actions/deploy/vercel/staging
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          pr-number: ${{ github.event.pull_request.number }}
+          sha: ${{ github.sha }}
