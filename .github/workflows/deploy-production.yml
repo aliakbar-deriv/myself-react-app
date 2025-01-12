@@ -1,7 +1,8 @@
 name: Deploy Production
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 # Ensure only one production deployment can run at a time
 concurrency:
@@ -18,7 +19,6 @@ jobs:
   quality:
     name: Quality Checks
     runs-on: ubuntu-latest
-    if: github.event.release.target_commitish == 'main'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,7 +33,6 @@ jobs:
     name: Deploy Production
     needs: quality
     runs-on: ubuntu-latest
-    if: github.event.release.target_commitish == 'main'
     permissions:
       deployments: write
     steps:
