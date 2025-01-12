@@ -1,28 +1,30 @@
-import { render, screen } from '@testing-library/react';
-import Profile from './Profile';
+import { render, screen } from "@testing-library/react";
+import { Profile } from "./Profile";
 
-describe('Profile Component', () => {
-  it('renders profile content correctly', () => {
+describe("Profile Component", () => {
+  it("renders profile content correctly", () => {
     render(<Profile />);
-    
-    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
-    expect(screen.getByText('Full Stack Developer')).toBeInTheDocument();
-    expect(screen.getByText(/Passionate software engineer/)).toBeInTheDocument();
+
+    expect(screen.getByText("Software Engineer")).toBeInTheDocument();
+    expect(screen.getByText("Full Stack Developer")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Passionate software engineer/),
+    ).toBeInTheDocument();
   });
 
-  it('renders CTA buttons with correct links', () => {
+  it("renders CTA buttons with correct links", () => {
     render(<Profile />);
-    
-    const contactButton = screen.getByText('Get in Touch');
-    const projectsButton = screen.getByText('View Projects');
 
-    expect(contactButton).toHaveAttribute('href', '#contact');
-    expect(projectsButton).toHaveAttribute('href', '#projects');
+    const contactButton = screen.getByText("Get in Touch");
+    const projectsButton = screen.getByText("View Projects");
+
+    expect(contactButton).toHaveAttribute("href", "#contact");
+    expect(projectsButton).toHaveAttribute("href", "#projects");
   });
 
-  it('has correct section id', () => {
+  it("has correct section id", () => {
     render(<Profile />);
-    const section = screen.getByTestId('profile-section');
-    expect(section).toHaveAttribute('id', 'profile');
+    const section = screen.getByTestId("profile-section");
+    expect(section).toHaveAttribute("id", "profile");
   });
 });
