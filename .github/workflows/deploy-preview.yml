@@ -10,8 +10,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Test and Deploy Preview
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+      
+      - name: Run quality assurance checks
+        uses: ./.github/actions/quality-checks
+
+  preview:
+    name: Deploy Preview
+    needs: quality
     runs-on: ubuntu-latest
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -22,11 +36,8 @@ jobs:
       
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-      
-      - name: Run quality assurance checks
-        uses: ./.github/actions/quality-checks
          
-      - name: Deploy to preview
+      - name: Deploy to Vercel
         uses: ./.github/actions/vercel-deploy-preview
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
