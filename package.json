@@ -14,12 +14,22 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf dist",
-    "clean:all": "rm -rf dist node_modules"
+    "clean:all": "rm -rf dist node_modules",
+    "prepare": "husky"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
@@ -32,7 +42,10 @@
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.18",
+    "husky": "^9.1.7",
     "jsdom": "^26.0.0",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
     "vite": "^6.0.7",
     "vitest": "^2.1.8"
   }
