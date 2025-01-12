@@ -1,6 +1,11 @@
 name: 'Deploy to Vercel Preview'
 description: 'Deploys the application to Vercel preview environment'
 
+outputs:
+  deployment-url:
+    description: 'The URL of the preview deployment'
+    value: ${{ steps.deploy.outputs.deployment-url }}
+
 inputs:
   vercel-token:
     description: 'Vercel authentication token'
@@ -41,17 +46,6 @@ runs:
       env:
         VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
         VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
+      id: deploy
       run: |
-        DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ inputs.vercel-token }})
-        echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-          
-    - name: Add preview URL to pull request
-      uses: actions/github-script@v6
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: ${{ inputs.pr-number }},
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `✨ Preview deployment is ready at: ${process.env.DEPLOYMENT_URL}`
-          })
+        echo "deployment-url=$(vercel deploy --prebuilt --token=${{ inputs.vercel-token }})" >> $GITHUB_OUTPUT

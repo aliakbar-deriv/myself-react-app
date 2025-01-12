@@ -35,6 +35,9 @@ jobs:
     name: Deploy Preview
     needs: quality
     runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -43,9 +46,41 @@ jobs:
         uses: ./.github/actions/setup-environment
          
       - name: Deploy to Vercel
+        id: deploy
         uses: ./.github/actions/deploy/vercel/development
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           pr-number: ${{ github.event.pull_request.number }}
+
+      - name: Generate app ID
+        id: generate-app-id
+        uses: ./.github/actions/generate-app-id
+
+      - name: Prepare preview URL
+        id: preview-url
+        uses: ./.github/actions/prepare-preview-url
+        with:
+          deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+          app-id: ${{ steps.generate-app-id.outputs.app-id }}
+
+      - name: Add preview URL to pull request
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.pull_request.number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✨ Preview deployment is ready at: ${{ steps.preview-url.outputs.url }}`
+            })
+
+      - name: Update deployment status
+        uses: ./.github/actions/deployment-status
+        with:
+          environment: 'Preview'
+          deployment-url: ${{ steps.preview-url.outputs.url }}
+          sha: ${{ github.event.pull_request.head.sha }}
+          status: 'success'
+          description: '✨ Preview deployment completed'

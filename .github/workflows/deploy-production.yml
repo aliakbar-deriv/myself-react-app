@@ -29,9 +29,19 @@ jobs:
         uses: ./.github/actions/setup-environment
         
       - name: Deploy to Vercel
+        id: deploy
         uses: ./.github/actions/deploy/vercel/production
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           sha: ${{ github.sha }}
+
+      - name: Update deployment status
+        uses: ./.github/actions/deployment-status
+        with:
+          environment: 'Production'
+          deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+          sha: ${{ github.sha }}
+          status: 'success'
+          description: '✨ Production deployment completed'

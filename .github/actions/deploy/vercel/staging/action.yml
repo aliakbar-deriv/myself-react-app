@@ -1,6 +1,11 @@
 name: 'Deploy to Vercel Staging'
 description: 'Deploys the application to Vercel staging environment'
 
+outputs:
+  deployment-url:
+    description: 'The URL of the Vercel deployment'
+    value: ${{ steps.deploy.outputs.deployment-url }}
+
 inputs:
   vercel-token:
     description: 'Vercel authentication token'
@@ -41,29 +46,6 @@ runs:
       env:
         VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
         VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
+      id: deploy
       run: |
-        DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ inputs.vercel-token }})
-        echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-          
-    - name: Update GitHub deployment status
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const deployment = await github.rest.repos.createDeployment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: '${{ inputs.sha }}',
-            environment: 'Staging',
-            auto_merge: false,
-            required_contexts: [],
-            description: 'Staging deployment via Vercel'
-          });
-          
-          await github.rest.repos.createDeploymentStatus({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            deployment_id: deployment.data.id,
-            state: 'success',
-            environment_url: process.env.DEPLOYMENT_URL,
-            description: '✨ Staging deployment completed'
-          });
+        echo "deployment-url=$(vercel deploy --prebuilt --token=${{ inputs.vercel-token }})" >> $GITHUB_OUTPUT

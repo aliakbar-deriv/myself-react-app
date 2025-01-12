@@ -43,9 +43,30 @@ jobs:
         uses: ./.github/actions/setup-environment
         
       - name: Deploy to Vercel
+        id: deploy
         uses: ./.github/actions/deploy/vercel/staging
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           sha: ${{ github.sha }}
+
+      - name: Generate app ID
+        id: generate-app-id
+        uses: ./.github/actions/generate-app-id
+
+      - name: Prepare preview URL
+        id: preview-url
+        uses: ./.github/actions/prepare-preview-url
+        with:
+          deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+          app-id: ${{ steps.generate-app-id.outputs.app-id }}
+
+      - name: Update deployment status
+        uses: ./.github/actions/deployment-status
+        with:
+          environment: 'Staging'
+          deployment-url: ${{ steps.preview-url.outputs.url }}
+          sha: ${{ github.sha }}
+          status: 'success'
+          description: '✨ Staging deployment completed'
