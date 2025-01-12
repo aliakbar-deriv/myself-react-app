@@ -1,0 +1,17 @@
+name: 'Generate App ID'
+description: 'Generates a random app ID for preview deployments'
+
+outputs:
+  app-id:
+    description: 'The generated app ID'
+    value: ${{ steps.generate.outputs.app-id }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate random ID
+      id: generate
+      shell: bash
+      run: |
+        APP_ID=$(openssl rand -hex 8)
+        echo "app-id=$APP_ID" >> $GITHUB_OUTPUT
