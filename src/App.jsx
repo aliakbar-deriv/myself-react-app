@@ -1,14 +1,13 @@
-import Header from './components/Header/Header';
-import Profile from './components/Profile/Profile';
-import './App.css';
+import "./App.css";
+import { Header } from "./components/Header/Header";
+import { Profile } from "./components/Profile/Profile";
 
 function App() {
   return (
-    <div className="app">
+    <div>
       <Header />
-      <main>
+      <main role="main">
         <Profile />
-        {/* Additional sections like Skills, Projects, and Contact will be added here */}
       </main>
     </div>
   );
