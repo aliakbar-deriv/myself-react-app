@@ -27,8 +27,18 @@ inputs:
     description: 'Maximum number of retry attempts for app ID generation'
     required: false
     default: '5'
+  deriv_api_token:
+    description: 'Deriv API token for authentication'
+    required: true
+  deriv_app_id:
+    description: 'Deriv App ID for identification'
+    required: true
+  github_token:
+    description: 'GitHub token for authentication'
+    required: true
 
 runs:
+  using: "composite"
   steps:
     - name: Validate Preview URL
       shell: bash
@@ -41,11 +51,10 @@ runs:
     - name: Generate Deriv App ID
       id: generate_app_id
       uses: deriv-com/deriv-app-id-action@v1
-      secrets:
-        DERIV_API_TOKEN: ${{ secrets.DERIV_API_TOKEN }}
-        DERIV_APP_ID: ${{ secrets.DERIV_APP_ID }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        DERIV_API_TOKEN: ${{ inputs.deriv_api_token }}
+        DERIV_APP_ID: ${{ inputs.deriv_app_id }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
         max_retries: ${{ inputs.max_retries }}
         vercel_preview_url: ${{ inputs.vercel_preview_url }}
       continue-on-error: false
