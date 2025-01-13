@@ -29,7 +29,6 @@ inputs:
     default: '5'
 
 runs:
-  using: "composite"
   steps:
     - name: Validate Preview URL
       shell: bash
