@@ -60,11 +60,13 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           sha: ${{ github.sha }}
 
-      - name: Generate app ID
+      - name: Generate Deriv App ID
         id: generate-app-id
         uses: ./.github/actions/generate-app-id
+        with:
+          vercel_preview_url: ${{ steps.deploy.outputs.deployment-url }}
 
-      - name: Prepare preview URL
+      - name: Prepare staging URL
         id: preview-url
         uses: ./.github/actions/prepare-preview-url
         with:
@@ -78,4 +80,4 @@ jobs:
           deployment-url: ${{ steps.preview-url.outputs.url }}
           sha: ${{ github.sha }}
           status: 'success'
-          description: '✨ Staging deployment completed'
+          description: '🚀 Staging deployment completed'

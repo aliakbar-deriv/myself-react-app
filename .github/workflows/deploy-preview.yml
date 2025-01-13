@@ -63,9 +63,11 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           pr-number: ${{ github.event.pull_request.number }}
 
-      - name: Generate app ID
+      - name: Generate Deriv App ID
         id: generate-app-id
         uses: ./.github/actions/generate-app-id
+        with:
+          vercel_preview_url: ${{ steps.deploy.outputs.deployment-url }}
 
       - name: Prepare preview URL
         id: preview-url
