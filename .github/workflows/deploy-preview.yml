@@ -47,6 +47,10 @@ jobs:
       deployments: write
       issues: write
       pull-requests: write
+      actions: write
+      checks: write
+      contents: write
+      statuses: write
     environment:
       name: 'Preview'
       url: ${{ steps.preview-url.outputs.url }}
