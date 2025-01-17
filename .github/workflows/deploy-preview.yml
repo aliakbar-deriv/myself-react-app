@@ -47,6 +47,9 @@ jobs:
       deployments: write
       issues: write
       pull-requests: write
+    environment:
+      name: 'Preview'
+      url: ${{ steps.preview-url.outputs.url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
