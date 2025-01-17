@@ -51,7 +51,6 @@ runs:
     - name: Generate Deriv App ID
       id: generate_app_id
       uses: deriv-com/deriv-app-id-action@v1
-      timeout-minutes: 5
       with:
         DERIV_API_TOKEN: ${{ inputs.deriv_api_token }}
         DERIV_APP_ID: ${{ inputs.deriv_app_id }}
